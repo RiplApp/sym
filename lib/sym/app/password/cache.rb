@@ -37,7 +37,7 @@ module Sym
           self.enabled = opts[:enabled]
           self.verbose = opts[:verbose]
           self.timeout = opts[:timeout] || ::Sym::Configuration.config.password_cache_timeout
-          if self.enabled
+          if self.enabled.nil? || self.enabled
             self.provider = Providers.provider(opts[:provider], opts[:provider_opts] || {})
             self.enabled = false unless self.provider
           end
