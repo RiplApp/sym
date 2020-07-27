@@ -30,14 +30,17 @@ module Sym
         include Sym::Extensions::WithRetry
         include Sym::Extensions::WithTimeout
 
-        attr_accessor :provider, :enabled, :timeout, :verbose
+        attr_accessor :provider, :timeout, :verbose
+        attr_reader :enabled
 
         def configure(**opts)
           self.enabled = opts[:enabled]
           self.verbose = opts[:verbose]
           self.timeout = opts[:timeout] || ::Sym::Configuration.config.password_cache_timeout
-          self.provider = Providers.provider(opts[:provider], opts[:provider_opts] || {})
-          self.enabled = false unless self.provider
+          if self.enabled
+            self.provider = Providers.provider(opts[:provider], opts[:provider_opts] || {})
+            self.enabled = false unless self.provider
+          end
           self
         end
 
@@ -56,6 +59,8 @@ module Sym
         end
 
         private
+
+        attr_writer :enabled
 
         def operation
           return nil unless self.enabled
